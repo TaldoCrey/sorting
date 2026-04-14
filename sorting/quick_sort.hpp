@@ -24,14 +24,14 @@ int sep(Vec *v, int start, int end, mutex& mtx) {
     return i;
 }
 
-void alg(Vec* v, int start, int end, mutex& mtx) {
+void qsort(Vec* v, int start, int end, mutex& mtx) {
     int off, sep_i;
     if (end > start) {
         off = randInt(0, end - start);
         troca(v, start+off, end);
         sep_i = sep(v, start, end, mtx);
-        alg(v, start, sep_i - 1, mtx);
-        alg(v, sep_i + 1, end, mtx);
+        qsort(v, start, sep_i - 1, mtx);
+        qsort(v, sep_i + 1, end, mtx);
     }  
 }
 
@@ -40,5 +40,5 @@ void quick_sort(Vec *v, mutex& mtx) {
         return;
     }
 
-    alg(v, 0, v->getSize() - 1, mtx);
+    qsort(v, 0, v->getSize() - 1, mtx);
 }

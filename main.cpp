@@ -12,8 +12,18 @@ using namespace std;
 
 mutex mtx;
 
+string change_timer(sf::Clock* clock, sf::Text* timerText) {
+    float elapsed = clock->getElapsedTime().asMilliseconds();
+    int secs = (int) elapsed / 1000;
+    int mili = (int) elapsed;
+    stringstream ss;
+    ss << "Elapsed Time: " << secs << "." << mili;
+    timerText->setString(ss.str());
+    return ss.str();
+}
+
 int main() {
-    int tam = 50;
+    float tam = (float) randInt(25, 200);
     Vec v = Vec();
 
     preenche(&v, tam, 100, 400);
@@ -28,20 +38,38 @@ int main() {
     sortingMText.setFont(font);
     sortingMText.setCharacterSize(20);
     sortingMText.setFillColor(sf::Color::White);
-    sortingMText.setPosition(sf::Vector2f(50, 50));
-    
+    sortingMText.setPosition(sf::Vector2f(50, 30));
     stringstream SMTextStr;
-
     SMTextStr << "Mode: Quick Sort";
-
     sortingMText.setString(SMTextStr.str());
 
+    sf::Text timerText;
+    timerText.setFont(font);
+    timerText.setCharacterSize(20);
+    timerText.setFillColor(sf::Color::White);
+    timerText.setPosition(sf::Vector2f(50, 60));
+    stringstream TimerTextStr;
+    TimerTextStr << "Elapsed time";
+    timerText.setString(TimerTextStr.str());
+
+    sf::Text sizeText;
+    sizeText.setFont(font);
+    sizeText.setCharacterSize(20);
+    sizeText.setFillColor(sf::Color::White);
+    sizeText.setPosition(sf::Vector2f(50, 90));
+    stringstream sizeTextStr;
+    sizeTextStr << "Size: " << tam;
+    sizeText.setString(sizeTextStr.str());
+
     sf::Event e;
+    sf::Clock clock;
     thread t_sort;
     bool exit = false;
     bool animation = false;
     bool isSorted = false;
     int mode = 0;
+    bool clockRun = true;
+    string finalElapsedTime;
     while (win.isOpen() && !exit) {
 
         while (win.pollEvent(e)) {
@@ -56,8 +84,11 @@ int main() {
 
             if (e.type == sf::Event::KeyPressed) {
                 if (!isSorted && e.key.code == sf::Keyboard::Return) {
+                    clockRun = true;
                     if (mode == 0) {
                         t_sort = thread(quick_sort, &v, ref(mtx));
+                    } else if (mode == 1) {
+                        t_sort = thread(merge_sort, &v, ref(mtx));
                     } else if (mode == 2) {
                         t_sort = thread(bubble_sort, &v, ref(mtx));
                     } else {
@@ -66,6 +97,11 @@ int main() {
                 }
 
                 if (e.key.code == sf::Keyboard::R) {
+                    tam = (float) randInt(25, 200);
+                    sizeTextStr.str("");
+                    sizeTextStr.clear();
+                    sizeTextStr << "Size: " << tam;
+                    sizeText.setString(sizeTextStr.str());
                     v.clear();
                     preenche(&v, tam, 100, 500);
                     animation = false;
@@ -101,11 +137,14 @@ int main() {
         
 
         if (!isSorted && t_sort.joinable()) {
+            if (clockRun) change_timer(&clock, &timerText);
             win.clear(sf::Color::Black);
             if (sorted(&v) && t_sort.joinable()) {
                 t_sort.join();
                 isSorted = true;
                 animation = true;
+                clockRun = false;
+                finalElapsedTime = change_timer(&clock, &timerText);
             } else if (sorted(&v)) {
                 continue;
             }
@@ -114,8 +153,8 @@ int main() {
                 lock_guard<mutex> lock(mtx);
                 sf::RectangleShape e;
                 e.setFillColor(sf::Color::Red);
-                e.setOutlineColor(sf::Color::Black);
-                e.setOutlineThickness(1);
+                //e.setOutlineColor(sf::Color::Black);
+                //e.setOutlineThickness(1);
                 for (int i = 0; i < v.getSize(); i++) {
                     e.setSize(sf::Vector2f((1000 - tam) / tam, -1 * v[i]));
                     e.setPosition(sf::Vector2f((i*(1000/tam) + 1), 500));
@@ -123,11 +162,14 @@ int main() {
                 }
             }
             
-            this_thread::sleep_for(chrono::milliseconds(16));
+            //this_thread::sleep_for(chrono::milliseconds(16));
         } else {
+
+            clock.restart();
+            timerText.setString(finalElapsedTime);
             sf::RectangleShape e;
-            e.setOutlineColor(sf::Color::Black);
-            e.setOutlineThickness(1);
+            //e.setOutlineColor(sf::Color::Black);
+            //e.setOutlineThickness(1);
             win.clear(sf::Color::Black);
 
             if (!isSorted) e.setFillColor(sf::Color::Red);
@@ -157,6 +199,8 @@ int main() {
             }          
         }
 
+        win.draw(sizeText);
+        win.draw(timerText);
         win.draw(sortingMText);
         win.display();
     }

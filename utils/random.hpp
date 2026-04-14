@@ -10,3 +10,7 @@ int randInt(int min, int max) {
 
     return d(gen);
 }
+
+int randInt(int min, int max, int trunc) {
+    return (randInt(min, max) / 5) * 5;
+}

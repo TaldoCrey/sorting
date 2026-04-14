@@ -7,7 +7,7 @@ if [ -n "$1" ]; then
 		g++ ./tests/test_s.cpp -o ./builds/test
 		echo "Compiled structure test with success"
 	else
-		g++ main.cpp -o app -lsfml-graphics -lsfml-audio -lsfml-window -lsfml-system -utf-8
+		g++ main.cpp -o ./builds/app -lsfml-graphics -lsfml-audio -lsfml-window -lsfml-system -utf-8
 		echo "Compiled with success"
 	fi
 else

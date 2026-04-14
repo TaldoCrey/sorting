@@ -21,6 +21,7 @@ class Vec {
         Node* fixIndex(Node* current);
     public:
         Vec();
+        Vec(int n);
 
         int getSize();
         Node* getStart();
@@ -38,6 +39,16 @@ Vec::Vec() {
     this->start = nullptr;
     this->end = nullptr;
     this->size = 0;
+}
+
+Vec::Vec(int n) {
+    this->start = nullptr;
+    this->end = nullptr;
+    this->size = 0;
+
+    for (int i = 0; i < n; i++) {
+        this->push(0);
+    }
 }
 
 Node* Vec::fixIndex(Node* current) {

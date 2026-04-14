@@ -6,6 +6,7 @@
 #include <chrono>
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
+#include <sstream>
 
 using namespace std;
 
@@ -19,11 +20,28 @@ int main() {
 
     sf::RenderWindow win(sf::VideoMode(1000, 500), "Sorting Algs");
     win.setFramerateLimit(60);
+
+    sf::Font font;
+    font.loadFromFile("./assets/Montserrat/static/Montserrat-Black.ttf");
+
+    sf::Text sortingMText;
+    sortingMText.setFont(font);
+    sortingMText.setCharacterSize(20);
+    sortingMText.setFillColor(sf::Color::White);
+    sortingMText.setPosition(sf::Vector2f(50, 50));
+    
+    stringstream SMTextStr;
+
+    SMTextStr << "Mode: Quick Sort";
+
+    sortingMText.setString(SMTextStr.str());
+
     sf::Event e;
     thread t_sort;
     bool exit = false;
     bool animation = false;
     bool isSorted = false;
+    int mode = 0;
     while (win.isOpen() && !exit) {
 
         while (win.pollEvent(e)) {
@@ -38,7 +56,11 @@ int main() {
 
             if (e.type == sf::Event::KeyPressed) {
                 if (!isSorted && e.key.code == sf::Keyboard::Return) {
-                    t_sort = thread(quick_sort, &v, ref(mtx));
+                    if (mode == 0) {
+                        t_sort = thread(quick_sort, &v, ref(mtx));
+                    } else {
+                        mode = 0;
+                    }
                 }
 
                 if (e.key.code == sf::Keyboard::R) {
@@ -46,6 +68,30 @@ int main() {
                     preenche(&v, tam, 100, 500);
                     animation = false;
                     isSorted = false;
+                }
+
+                if (e.key.code == sf::Keyboard::Num0) {
+                    SMTextStr.clear();
+                    SMTextStr.str("");
+                    SMTextStr << "Mode: Quick Sort";
+                    sortingMText.setString(SMTextStr.str());
+                    mode = 0;
+                }
+
+                if (e.key.code == sf::Keyboard::Num1) {
+                    SMTextStr.clear();
+                    SMTextStr.str("");
+                    SMTextStr << "Mode: Merge Sort";
+                    sortingMText.setString(SMTextStr.str());
+                    mode = 1;
+                }
+
+                if (e.key.code == sf::Keyboard::Num2) {
+                    SMTextStr.clear();
+                    SMTextStr.str("");
+                    SMTextStr << "Mode: Bubble Sort";
+                    sortingMText.setString(SMTextStr.str());
+                    mode = 2;
                 }
             }
         }
@@ -109,6 +155,7 @@ int main() {
             }          
         }
 
+        win.draw(sortingMText);
         win.display();
     }
 }

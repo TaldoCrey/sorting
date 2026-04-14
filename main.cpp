@@ -1,6 +1,6 @@
 #include <iostream>
 #include "./structures/vec.hpp"
-#include "./sorting/quick_sort.hpp"
+#include "./sorting/sorting.hpp"
 #include <mutex>
 #include <thread>
 #include <chrono>
@@ -58,8 +58,10 @@ int main() {
                 if (!isSorted && e.key.code == sf::Keyboard::Return) {
                     if (mode == 0) {
                         t_sort = thread(quick_sort, &v, ref(mtx));
+                    } else if (mode == 2) {
+                        t_sort = thread(bubble_sort, &v, ref(mtx));
                     } else {
-                        mode = 0;
+                        continue;
                     }
                 }
 

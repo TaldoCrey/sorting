@@ -10,6 +10,10 @@ This repository contains a C++ application that provides a visual demonstration 
 2. Then you need to run `./compile.sh` to compile your code and put the binary into `./builds`
 3. Finally, you run `./run.sh` and have fun!
 
+## Current Sorting Algorithms
+- Quick Sort
+- Bubble Sort
+
 ## Controls
 
 - **Numbers (between 0 and 2):** Select sorting algorithm.

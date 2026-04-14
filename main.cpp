@@ -22,8 +22,8 @@ int main() {
     sf::Event e;
     thread t_sort;
     bool exit = false;
-    bool animation = true;
-    bool slow = false;
+    bool animation = false;
+    bool isSorted = false;
     while (win.isOpen() && !exit) {
 
         while (win.pollEvent(e)) {
@@ -37,27 +37,27 @@ int main() {
             }
 
             if (e.type == sf::Event::KeyPressed) {
-                if (e.key.code == sf::Keyboard::Return) {
+                if (!isSorted && e.key.code == sf::Keyboard::Return) {
                     t_sort = thread(quick_sort, &v, ref(mtx));
-                    animation = false;
-                    slow = true;
                 }
 
                 if (e.key.code == sf::Keyboard::R) {
                     v.clear();
                     preenche(&v, tam, 100, 500);
-                    animation = true;
-                    slow = false;
+                    animation = false;
+                    isSorted = false;
                 }
             }
         }
 
         
 
-        if (t_sort.joinable()) {
+        if (!isSorted && t_sort.joinable()) {
             win.clear(sf::Color::Black);
             if (sorted(&v) && t_sort.joinable()) {
                 t_sort.join();
+                isSorted = true;
+                animation = true;
             } else if (sorted(&v)) {
                 continue;
             }
@@ -78,27 +78,35 @@ int main() {
             this_thread::sleep_for(chrono::milliseconds(16));
         } else {
             sf::RectangleShape e;
-            e.setFillColor(sf::Color::Green);
             e.setOutlineColor(sf::Color::Black);
             e.setOutlineThickness(1);
-            if (!animation) {
-                animation = true;
-            } else {
-                win.clear(sf::Color::Black);
-            }
+            win.clear(sf::Color::Black);
 
-            for (int i = 0; i < v.getSize(); i++) {
-                e.setSize(sf::Vector2f((1000 - tam) / tam, -1 * v[i]));
-                e.setPosition(sf::Vector2f((i*(1000/tam) + 1), 500));
-                win.draw(e);
-                if (slow) {
-                    this_thread::sleep_for(chrono::milliseconds(16));
+            if (!isSorted) e.setFillColor(sf::Color::Red);
+            else e.setFillColor(sf::Color::Green);
+
+            if (animation) {
+                animation = false;
+
+                for (int i = 0; i < v.getSize(); i++) {
+                    win.clear(sf::Color::Black);
+
+                    for (int j = 0; j <= i; j++) {
+                        e.setSize(sf::Vector2f((1000 - tam) / tam, -1 * v[j]));
+                        e.setPosition(sf::Vector2f((j*(1000/tam) + 1), 500));
+                        win.draw(e);
+                    }
+
                     win.display();
+                    this_thread::sleep_for(chrono::milliseconds(20));
                 }
-            }
-
-            if (slow) slow = false;
-            
+            } else {                
+                for (int i = 0; i < v.getSize(); i++) {
+                    e.setSize(sf::Vector2f((1000 - tam) / tam, -1 * v[i]));
+                    e.setPosition(sf::Vector2f((i*(1000/tam) + 1), 500));
+                    win.draw(e);
+                }
+            }          
         }
 
         win.display();

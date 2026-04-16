@@ -1,5 +1,5 @@
 #include <iostream>
-#include "./structures/vec.hpp"
+#include "./structures/structures.hpp"
 #include "./sorting/sorting.hpp"
 #include <mutex>
 #include <thread>
@@ -67,6 +67,7 @@ int main() {
     bool exit = false;
     bool animation = false;
     bool isSorted = false;
+    bool running = false;
     int mode = 0;
     bool clockRun = true;
     string finalElapsedTime;
@@ -82,15 +83,19 @@ int main() {
                 break;
             }
 
-            if (e.type == sf::Event::KeyPressed) {
+            if (e.type == sf::Event::KeyPressed && !running) {
                 if (!isSorted && e.key.code == sf::Keyboard::Return) {
                     clockRun = true;
+                    running = true;
                     if (mode == 0) {
                         t_sort = thread(quick_sort, &v, ref(mtx));
                     } else if (mode == 1) {
                         t_sort = thread(merge_sort, &v, ref(mtx));
                     } else if (mode == 2) {
                         t_sort = thread(bubble_sort, &v, ref(mtx));
+                    } else if (mode == 3) {
+                        Heap h = Heap(&v);
+                        t_sort = thread(heap_sort, &h, ref(mtx));
                     } else {
                         continue;
                     }
@@ -114,22 +119,24 @@ int main() {
                     SMTextStr << "Mode: Quick Sort";
                     sortingMText.setString(SMTextStr.str());
                     mode = 0;
-                }
-
-                if (e.key.code == sf::Keyboard::Num1) {
+                } else if (e.key.code == sf::Keyboard::Num1) {
                     SMTextStr.clear();
                     SMTextStr.str("");
                     SMTextStr << "Mode: Merge Sort";
                     sortingMText.setString(SMTextStr.str());
                     mode = 1;
-                }
-
-                if (e.key.code == sf::Keyboard::Num2) {
+                } else if (e.key.code == sf::Keyboard::Num2) {
                     SMTextStr.clear();
                     SMTextStr.str("");
                     SMTextStr << "Mode: Bubble Sort";
                     sortingMText.setString(SMTextStr.str());
                     mode = 2;
+                } else if (e.key.code == sf::Keyboard::Num3) {
+                    SMTextStr.clear();
+                    SMTextStr.str("");
+                    SMTextStr << "Mode: Heap Sort";
+                    sortingMText.setString(SMTextStr.str());
+                    mode = 3;
                 }
             }
         }
@@ -177,7 +184,7 @@ int main() {
 
             if (animation) {
                 animation = false;
-
+                
                 for (int i = 0; i < v.getSize(); i++) {
                     win.clear(sf::Color::Black);
 
@@ -190,6 +197,7 @@ int main() {
                     win.display();
                     this_thread::sleep_for(chrono::milliseconds(20));
                 }
+                running = false;
             } else {                
                 for (int i = 0; i < v.getSize(); i++) {
                     e.setSize(sf::Vector2f((1000 - tam) / tam, -1 * v[i]));

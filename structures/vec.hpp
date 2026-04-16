@@ -13,7 +13,7 @@ struct Node {
 } typedef Node;
 
 class Vec {
-    private:
+    protected:
         int size;
         Node* start;
         Node* end;
@@ -96,6 +96,7 @@ void Vec::push(int x) {
     this->size++;
 }
 
+// Remove o último elemento.
 int Vec::pop() {
     if (this->size == 0) throw runtime_error("Vector is already empty");
 
@@ -111,6 +112,7 @@ int Vec::pop() {
     return i;
 }
 
+//Remove o elemento da posição i
 int Vec::pop(int i) {
     if (this->size == 0) throw runtime_error("Vector is already empty");
     

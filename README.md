@@ -11,12 +11,16 @@ This repository contains a C++ application that provides a visual demonstration 
 3. Finally, you run `./run.sh` and have fun!
 
 ## Current Sorting Algorithms
-- Quick Sort
-- Bubble Sort
+- Quick Sort (0)
+- Merge Sort (1)
+- Bubble Sort (2)
+- Heap Sort (3)
+
+> Algorithm (Number for selection)
 
 ## Controls
 
-- **Numbers (between 0 and 2):** Select sorting algorithm.
+- **Numbers (between 0 and 3):** Select sorting algorithm.
 - **Enter/Return:** Start the chosen sorting algorithm.
 - **R:** Reset the vector for another round of sorting.
 

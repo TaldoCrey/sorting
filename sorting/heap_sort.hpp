@@ -11,7 +11,7 @@ void heap_sort(Heap *h, mutex &mtx) {
             h->sobeHeap(i);
             
         }
-        this_thread::sleep_for(chrono::milliseconds(15));
+        this_thread::sleep_for(chrono::milliseconds(25));
     }
 
     for (m = h->getVec()->getSize(); m > 0; m--) {
@@ -20,6 +20,6 @@ void heap_sort(Heap *h, mutex &mtx) {
             troca(h->getVec(), 0, m - 1);
             h->desceHeap(0, m - 1);
         }
-        this_thread::sleep_for(chrono::milliseconds(10));
+        this_thread::sleep_for(chrono::milliseconds(25));
     }
 }
